@@ -1,0 +1,25 @@
+name: Reusable Pull Image Workflow
+
+on:
+  workflow_call:
+    inputs:
+      project-name:
+        required: true
+        type: string
+        default: some-project
+      image-name:
+        required: true
+        type: string
+        default: alpine
+      pull-image:
+        required: true
+        type: boolean
+
+jobs:
+  pull-docker-image:
+    runs-on: ubuntu-latest
+    if: ${{ inputs.pull-image }}
+    steps:
+      - name: Pull Docker image
+        run: |
+          docker pull ${{ inputs.image-name }}
