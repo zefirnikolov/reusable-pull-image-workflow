@@ -6,14 +6,17 @@ on:
       project-name:
         required: true
         type: string
-        default: some-project
       image-name:
         required: true
         type: string
-        default: alpine
       pull-image:
         required: true
         type: boolean
+        default: false
+      image-tag:
+        required: false
+        type: string
+        default: latest
 
 jobs:
   pull-docker-image:
@@ -21,5 +24,4 @@ jobs:
     if: ${{ inputs.pull-image }}
     steps:
       - name: Pull Docker image
-        run: |
-          docker pull ${{ inputs.image-name }}
+        run: docker pull ${{ inputs.image-name }}:${{ inputs.image-tag }}
