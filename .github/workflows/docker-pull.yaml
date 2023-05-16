@@ -35,6 +35,7 @@ jobs:
           path: |
             ${{ github.sha }}-file1.tar
             ${{ github.sha }}-file2.tar
+          retention-days: 1
   download-artifacts:
     runs-on: ubuntu-latest
     steps:
