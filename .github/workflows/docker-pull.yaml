@@ -19,6 +19,41 @@ on:
         default: latest
 
 jobs:
+  upload-artifacts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: get the repo
+        uses: actions/checkout@v3
+      - name: make .tar files
+        run: |
+          tar -cvf ${{ github.sha }}-file1.tar for-upload-1.txt
+          tar -cvf ${{ github.sha }}-file2.tar for-upload-2.txt
+      - name: upload tar files
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: |
+            ${{ github.sha }}-file1.tar
+            ${{ github.sha }}-file2.tar
+  download-artifacts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download tar files
+        uses: actions/download-artifact@v3
+        with:
+          name: my-artifact
+      - name: Extract tar files
+        run: |
+          tar -xvf ${{ github.sha }}-file1.tar
+          tar -xvf ${{ github.sha }}-file2.tar
+      - name: Read the files and delete
+        run: |
+          cat for-upload-1.txt
+          cat for-upload-2.txt
+          ls
+          rm ${{ github.sha }}-file1.tar ${{ github.sha }}-file2.tar for-upload-1.txt for-upload-2.txt
+          ls
+
   pull-docker-image:
     runs-on: ubuntu-latest
     if: ${{ inputs.pull-image }}
