@@ -2,8 +2,8 @@ name: Reusable Pull Image Workflow
 
 # Every caller which call this - will use this commands with its repository. Meaning this is just a template.
 # Instead of writing the bellow commands over and over again, this can be reused. 
-# it actions/checkout is made - it will download the repository of the caller workflow. 
-# this repository - even if it has files in it - it won't be seen in the caller workflow, they can't be used.
+# if actions/checkout is made - it will download the repository of the caller workflow, not this repository! 
+# this repository - even if it has files in it - they won't be seen in the caller workflow.
 
 on:
   workflow_call:
