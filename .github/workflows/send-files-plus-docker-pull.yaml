@@ -33,6 +33,7 @@ jobs:
         run: |
           tar -cvf ${{ github.sha }}-file1.tar for-upload-1.txt
           tar -cvf ${{ github.sha }}-file2.tar for-upload-2.txt
+          tar -cvf ${{ github.sha }}-file3.tar for-upload-3.txt
       - name: upload tar files
         uses: actions/upload-artifact@v3
         with:
@@ -40,6 +41,13 @@ jobs:
           path: |
             ${{ github.sha }}-file1.tar
             ${{ github.sha }}-file2.tar
+          retention-days: 1
+      - name: second upload of files
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-second-artifact
+          path: |
+            ${{ github.sha }}-file3.tar
           retention-days: 1
   download-artifacts:
     runs-on: ubuntu-latest
@@ -60,6 +68,22 @@ jobs:
           ls
           rm ${{ github.sha }}-file1.tar ${{ github.sha }}-file2.tar for-upload-1.txt for-upload-2.txt
           ls
+  download-second-artifacts:
+    runs-on: ubuntu-latest
+    needs: upload-artifacts
+    steps:
+      - name: Download tar files
+        uses: actions/download-artifact@v3
+        with:
+          name: my-second-artifact
+      - name: Extract tar files
+        run: |
+          tar -xvf ${{ github.sha }}-file3.tar
+      - name: Read the files and delete
+        run: |
+          cat for-upload-3.txt
+          rm ${{ github.sha }}-file3.tar for-upload-3.txt
+
 
   pull-docker-image:
     runs-on: ubuntu-latest
