@@ -84,7 +84,6 @@ jobs:
           cat for-upload-3.txt
           rm ${{ github.sha }}-file3.tar for-upload-3.txt
 
-
   pull-docker-image:
     runs-on: ubuntu-latest
     if: ${{ inputs.pull-image }}
