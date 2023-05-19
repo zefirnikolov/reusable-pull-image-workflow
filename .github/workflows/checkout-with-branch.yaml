@@ -1,0 +1,30 @@
+name: demo
+
+on:
+  workflow_call:
+    inputs:
+      docker-image:
+        required: true
+        type: string
+      repo-branch:
+        required: false
+        default: false
+        type: boolean
+      repo-branch-name:
+        required: false
+        type: string
+
+jobs:
+  upload-image:
+    runs-on: ubuntu-latest
+    if: ${{ inputs.docker-image }}
+    steps:
+      - name: Get code from main branch
+        if: ${{ !inputs.repo-branch }}
+        uses: actions/checkout@v3
+
+      - name: Get code with branch name
+        if: ${{ inputs.repo-branch }}
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.repo-branch-name }}
