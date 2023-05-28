@@ -41,7 +41,7 @@ jobs:
           fi
       - name: Set the new docker image
         run: |
-          docker image tag ${{ inputs.docker-image }} dockerhub-name/newimage:${{ steps.tag_docker_image.outputs.TAGGED_DOCKER_IMAGE }}
+          docker image tag ${{ inputs.docker-image }} dockerhub-name/newimage-${{ inputs.docker-image }}:${{ steps.tag_docker_image.outputs.TAGGED_DOCKER_IMAGE }}
       - name: Echo docker images
         run: |
           docker image ls
