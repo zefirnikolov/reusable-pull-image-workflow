@@ -28,13 +28,13 @@ jobs:
         id: tag_docker_image
         run: |
           if [[ "${{ inputs.stage }}" == 'deve' ]]; then
-              echo "TAGGED_DOCKER_IMAGE=${{ inputs.release-version }}-deve-${{ github.run_number }}" >> $GITHUB_OUTPUT
+              echo "TAGGED_DOCKER_IMAGE=deve-${{ inputs.release-version }}-${{ github.run_number }}" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.stage }}" == 'test' ]]; then
-              echo "TAGGED_DOCKER_IMAGE=${{ inputs.release-version }}-test-${{ github.run_number }}" >> $GITHUB_OUTPUT 
+              echo "TAGGED_DOCKER_IMAGE=test-${{ inputs.release-version }}-${{ github.run_number }}" >> $GITHUB_OUTPUT 
           elif [[ "${{ inputs.stage }}" == 'stag' ]]; then
-              echo "TAGGED_DOCKER_IMAGE=${{ inputs.release-version }}-stag-${{ github.run_number }}" >> $GITHUB_OUTPUT
+              echo "TAGGED_DOCKER_IMAGE=stag-${{ inputs.release-version }}-${{ github.run_number }}" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.stage }}" == 'prod' ]]; then
-              echo "TAGGED_DOCKER_IMAGE=${{ inputs.release-version }}-prod-${{ github.run_number }}" >> $GITHUB_OUTPUT
+              echo "TAGGED_DOCKER_IMAGE=prod-${{ inputs.release-version }}-${{ github.run_number }}" >> $GITHUB_OUTPUT
           else
               echo "Invalid stage. Exiting with error."
               exit 1
