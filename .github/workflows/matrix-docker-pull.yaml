@@ -1,0 +1,25 @@
+name: Matrix docker pull image
+
+on:
+  workflow_call:
+    inputs:
+      base-image:
+        required: false
+        type: string
+        default: '["ubuntu","redhat/ubi9"]'
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: ${{ fromJson(inputs.base-image) }}
+    steps:
+      - name: Pull image
+        run: docker pull ${{ matrix.image }}
+      - name: Make dummy file
+        run: |
+          echo "Hello world" > file.txt
+      - name: Cat file
+        run: |
+          cat file.txt
