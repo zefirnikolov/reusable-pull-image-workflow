@@ -1,0 +1,72 @@
+name: Docker Image Workflow
+
+on:
+  workflow_call:
+    inputs:
+      docker-image:
+        description: 'The Docker image to be tagged.'
+        required: true
+        type: string
+      stage:
+        description: 'The stage for tagging Docker image: deve, test, stag, prod.'
+        required: true
+        type: string
+      release-version:
+        required: true
+        type: string
+
+jobs:
+  tag_image:
+    runs-on: ubuntu-latest
+    outputs:
+      TAGGED_DOCKER_IMAGE: ${{ steps.tag_docker_image.outputs.TAGGED_DOCKER_IMAGE }}   # 1 - steps - because it's in the steps, 2 - tag_docker_image - this is the ID of one of the steps, 3. outputs, 4 - the name of the output
+    steps:
+      - name: Pull the image
+        run: |
+          docker pull ${{ inputs.docker-image }}
+      - name: Set Docker image tag
+        id: tag_docker_image
+        run: |
+          if [[ "${{ inputs.stage }}" == 'deve' ]]; then
+              echo "TAGGED_DOCKER_IMAGE=${{ inputs.release-version }}-deve-${{ github.run_number }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ inputs.stage }}" == 'test' ]]; then
+              echo "TAGGED_DOCKER_IMAGE=${{ inputs.release-version }}-test-${{ github.run_number }}" >> $GITHUB_OUTPUT 
+          elif [[ "${{ inputs.stage }}" == 'stag' ]]; then
+              echo "TAGGED_DOCKER_IMAGE=${{ inputs.release-version }}-stag-${{ github.run_number }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ inputs.stage }}" == 'prod' ]]; then
+              echo "TAGGED_DOCKER_IMAGE=${{ inputs.release-version }}-prod-${{ github.run_number }}" >> $GITHUB_OUTPUT
+          else
+              echo "Invalid stage. Exiting with error."
+              exit 1
+          fi
+      - name: Set the new docker image
+        run: |
+          docker image tag ${{ inputs.docker-image }} dockerhub-name/newimage:${{ steps.tag_docker_image.outputs.TAGGED_DOCKER_IMAGE }}
+      - name: Echo docker images
+        run: |
+          docker image ls
+  create_helm_chart:
+    needs: [tag_image]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Helm chart   # needs.tag_image - name of the job, outputs.TAGGED_DOCKER_IMAGE -> name of the output
+        run: |
+          TAGGED_IMAGE=${{ needs.tag_image.outputs.TAGGED_DOCKER_IMAGE }}
+          PREFIX=$(echo $TAGGED_IMAGE | cut -c1-4)
+
+          if [ "$PREFIX" == "deve" ]; then
+            echo "Creating development Helm chart..."
+            helm create chart-dev
+          elif [ "$PREFIX" == "test" ]; then
+            echo "Creating test Helm chart..."
+            helm create chart-test
+          elif [ "$PREFIX" == "stag" ]; then
+            echo "Creating staging Helm chart..."
+            helm create chart-stag
+          elif [ "$PREFIX" == "prod" ]; then
+            echo "Creating production Helm chart..."
+            helm create chart-prod
+          else
+            echo "Invalid prefix. Exiting with error."
+            exit 1
+          fi
