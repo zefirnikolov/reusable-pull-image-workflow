@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Create Helm chart   # needs.tag_image - name of the job, outputs.TAGGED_DOCKER_IMAGE -> name of the output
         run: |
-          TAGGED_IMAGE=${{ needs.tag_image.outputs.TAGGED_DOCKER_IMAGE }}
+          TAGGED_IMAGE=${{ needs.call_workflow.outputs.TAGGED_DOCKER_IMAGE }}
           PREFIX=$(echo $TAGGED_IMAGE | cut -c1-4)
 
           if [ "$PREFIX" == "deve" ]; then
