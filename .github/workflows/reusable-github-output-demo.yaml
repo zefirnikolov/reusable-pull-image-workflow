@@ -14,6 +14,10 @@ on:
       release-version:
         required: true
         type: string
+    outputs:
+      GLOBAL_TAGGED_DOCKER_IMAGE:
+        description: "The global output of the job"
+        value: ${{ jobs.tag_image.outputs.TAGGED_DOCKER_IMAGE }}
 
 jobs:
   tag_image:
