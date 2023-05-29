@@ -14,10 +14,6 @@ on:
       release-version:
         required: true
         type: string
-    outputs:
-      GLOBAL_TAGGED_DOCKER_IMAGE:
-        description: "The global output of the job"
-        value: ${{ jobs.tag_image.outputs.TAGGED_DOCKER_IMAGE }}
 
 jobs:
   tag_image:
@@ -59,6 +55,10 @@ jobs:
           name: image-tag
           path: image_tag.txt
           retention-days: 1
+  
+  # use the second reusable workflow for the helm charts.
+
+
 
   # create_helm_chart:
   #   needs: [tag_image]
