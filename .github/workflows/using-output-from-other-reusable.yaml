@@ -19,7 +19,7 @@ jobs:
   create_helm_chart:
     runs-on: ubuntu-latest
     steps:
-      - name: Create Helm chart   # needs.tag_image - name of the job, outputs.TAGGED_DOCKER_IMAGE -> name of the output
+      - name: Create Helm chart
         run: |
           TAGGED_IMAGE=${{ needs.call_workflow.outputs.GLOBAL_TAGGED_DOCKER_IMAGE }}
           PREFIX=$(echo $TAGGED_IMAGE | cut -c1-4)
