@@ -19,9 +19,14 @@ jobs:
   create_helm_chart:
     runs-on: ubuntu-latest
     steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: image-tag
+            
       - name: Create Helm chart
         run: |
-          TAGGED_IMAGE=${{ needs.call_workflow.outputs.GLOBAL_TAGGED_DOCKER_IMAGE }}
+          TAGGED_IMAGE=$(cat image_tag.txt)
           PREFIX=$(echo $TAGGED_IMAGE | cut -c1-4)
 
           if [ "$PREFIX" == "deve" ]; then

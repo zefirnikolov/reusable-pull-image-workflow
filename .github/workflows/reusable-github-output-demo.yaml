@@ -49,6 +49,17 @@ jobs:
       - name: Echo docker images
         run: |
           docker image ls
+      - name: Set image tag
+        run: |
+          echo ${{ steps.tag_docker_image.outputs.TAGGED_DOCKER_IMAGE }} > image_tag.txt
+          cat image_tag.txt
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: image-tag
+          path: image_tag.txt
+          retention-days: 1
+
   # create_helm_chart:
   #   needs: [tag_image]
   #   runs-on: ubuntu-latest
