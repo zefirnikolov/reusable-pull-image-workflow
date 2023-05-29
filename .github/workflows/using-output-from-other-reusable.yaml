@@ -1,0 +1,42 @@
+name: Docker Image Workflow
+
+on:
+  workflow_call:
+    inputs:
+      docker-image:
+        description: 'The Docker image to be tagged.'
+        required: true
+        type: string
+      stage:
+        description: 'The stage for tagging Docker image: deve, test, stag, prod.'
+        required: false
+        type: string
+      release-version:
+        required: false
+        type: string
+
+jobs:
+  create_helm_chart:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Helm chart   # needs.tag_image - name of the job, outputs.TAGGED_DOCKER_IMAGE -> name of the output
+        run: |
+          TAGGED_IMAGE=${{ needs.tag_image.outputs.TAGGED_DOCKER_IMAGE }}
+          PREFIX=$(echo $TAGGED_IMAGE | cut -c1-4)
+
+          if [ "$PREFIX" == "deve" ]; then
+            echo "Creating development Helm chart..."
+            helm create chart-dev && cd chart-dev && ls
+          elif [ "$PREFIX" == "test" ]; then
+            echo "Creating test Helm chart..."
+            helm create chart-test && cd chart-test && ls
+          elif [ "$PREFIX" == "stag" ]; then
+            echo "Creating staging Helm chart..."
+            helm create chart-stage && cd chart-stage && ls
+          elif [ "$PREFIX" == "prod" ]; then
+            echo "Creating production Helm chart..."
+            helm create chart-prod && cd chart-prod && ls
+          else
+            echo "Invalid prefix. Exiting with error."
+            exit 1
+          fi
