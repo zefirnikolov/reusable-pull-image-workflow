@@ -60,6 +60,7 @@ jobs:
 
   # LOOK AT THIS LOGIC if it's in the same workflow, but with another job: 
   # THE OUTPUT IN ANOTHER JOB IS CALLED LIKE THIS: ${{ needs.tag_image.outputs.TAGGED_DOCKER_IMAGE }}
+  # The output can easily be called from another job, but can't be from another repository.
 
   # create_helm_chart:
   #   needs: [tag_image]
