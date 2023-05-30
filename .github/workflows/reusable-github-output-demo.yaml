@@ -58,7 +58,8 @@ jobs:
   
   # use the second reusable workflow for the helm charts.
 
-
+  # LOOK AT THIS LOGIC if it's in the same workflow, but with another job: 
+  # THE OUTPUT IN ANOTHER JOB IS CALLED LIKE THIS: ${{ needs.tag_image.outputs.TAGGED_DOCKER_IMAGE }}
 
   # create_helm_chart:
   #   needs: [tag_image]
