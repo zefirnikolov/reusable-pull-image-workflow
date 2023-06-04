@@ -1,0 +1,53 @@
+name: Calculate version and make global output
+
+# https://docs.github.com/en/actions/using-workflows/reusing-workflows#using-outputs-from-a-reusable-workflow
+
+on:
+  workflow_call:
+    inputs:
+      docker-image:
+        description: 'The Docker image to be tagged.'
+        required: true
+        type: string
+      stage:
+        description: 'The stage for tagging Docker image: deve, test, stag, prod.'
+        required: true
+        type: string
+      release-version:
+        required: true
+        type: string
+    outputs:
+      DOCKER_TAG:
+        description: "Creating output of the docker image calculation"
+        value: ${{ jobs.tag_image.outputs.TAGGED_DOCKER_IMAGE }}
+
+jobs:
+  tag_image:
+    runs-on: ubuntu-latest
+    outputs:
+      TAGGED_DOCKER_IMAGE: ${{ steps.tag_docker_image.outputs.TAGGED_DOCKER_IMAGE }}
+    steps:
+      - name: Pull the image
+        run: |
+          docker pull ${{ inputs.docker-image }}
+      - name: Set Docker image tag
+        id: tag_docker_image
+        run: |
+          if [[ "${{ inputs.stage }}" == 'deve' ]]; then
+              echo "TAGGED_DOCKER_IMAGE=deve-${{ inputs.release-version }}-${{ github.run_number }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ inputs.stage }}" == 'test' ]]; then
+              echo "TAGGED_DOCKER_IMAGE=test-${{ inputs.release-version }}-${{ github.run_number }}" >> $GITHUB_OUTPUT 
+          elif [[ "${{ inputs.stage }}" == 'stag' ]]; then
+              echo "TAGGED_DOCKER_IMAGE=stag-${{ inputs.release-version }}-${{ github.run_number }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ inputs.stage }}" == 'prod' ]]; then
+              echo "TAGGED_DOCKER_IMAGE=prod-${{ inputs.release-version }}-${{ github.run_number }}" >> $GITHUB_OUTPUT
+          else
+              echo "Invalid stage. Exiting with error."
+              exit 1
+          fi
+      - name: Set the new docker image
+        run: |
+          docker image tag ${{ inputs.docker-image }} dockerhub-name/newimage-${{ inputs.docker-image }}:${{ steps.tag_docker_image.outputs.TAGGED_DOCKER_IMAGE }}
+      - name: Echo docker images
+        run: |
+          docker image ls

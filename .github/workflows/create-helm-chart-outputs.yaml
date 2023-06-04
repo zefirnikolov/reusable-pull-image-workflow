@@ -1,7 +1,7 @@
 name: Docker Image Workflow
 
 # Instead of creating helm charts, this can easily deploy helm charts to different k8s cluster,
-# based on the dev, test, stage, prod - stages in which the product is. 
+# based on the dev, test, stage, prod - stages in which the product is.
 # Or used for other purposes
 
 on:
@@ -11,40 +11,33 @@ on:
         description: 'The Docker image to be tagged.'
         required: true
         type: string
-      stage:
-        description: 'The stage for tagging Docker image: deve, test, stag, prod.'
-        required: false
-        type: string
-      release-version:
-        required: false
+      # To get the output from the other reusable workflow - you need to want it from it with input.
+      docker-tag:
+        description: "The docker tag from the version calculator"
+        required: true
         type: string
 
 jobs:
   create_helm_chart:
     runs-on: ubuntu-latest
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: image-tag
-            
+    steps:           
       - name: Create Helm chart
         run: |
-          TAGGED_IMAGE=$(cat image_tag.txt)
+          TAGGED_IMAGE=${{ inputs.docker-tag }}
           PREFIX=$(echo $TAGGED_IMAGE | cut -c1-4)
 
           if [ "$PREFIX" == "deve" ]; then
             echo "Creating development Helm chart..."
-            helm create chart-dev && cd chart-dev && ls
+            helm create chart-dev-${{ inputs.docker-tag }} && cd chart-dev-${{ inputs.docker-tag }} && ls
           elif [ "$PREFIX" == "test" ]; then
             echo "Creating test Helm chart..."
-            helm create chart-test && cd chart-test && ls
+            helm create chart-test-${{ inputs.docker-tag }} && cd chart-test-${{ inputs.docker-tag }} && ls
           elif [ "$PREFIX" == "stag" ]; then
             echo "Creating staging Helm chart..."
-            helm create chart-stage && cd chart-stage && ls
+            helm create chart-stage-${{ inputs.docker-tag }} && cd chart-stage-${{ inputs.docker-tag }} && ls
           elif [ "$PREFIX" == "prod" ]; then
             echo "Creating production Helm chart..."
-            helm create chart-prod && cd chart-prod && ls
+            helm create chart-prod-${{ inputs.docker-tag }} && cd chart-prod-${{ inputs.docker-tag }} && ls
           else
             echo "Invalid prefix. Exiting with error."
             exit 1
