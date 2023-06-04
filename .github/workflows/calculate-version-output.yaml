@@ -57,6 +57,7 @@ jobs:
               exit 1
           fi
       - name: Set the new docker image
+        if: ${{ inputs.pull-image }}
         run: |
           docker image tag ${{ inputs.docker-image }} dockerhub-name/newimage-${{ inputs.docker-image }}:${{ steps.tag_docker_image.outputs.TAGGED_DOCKER_IMAGE }}
       - name: Echo docker images
