@@ -27,7 +27,7 @@ on:
         required: true
         type: string
     outputs:
-      DOCKER_TAG:
+      TAGGED_DOCKER_IMAGE:
         description: "Creating output of the docker image calculation"
         value: ${{ jobs.tag_image.outputs.TAGGED_DOCKER_IMAGE }}
 
