@@ -14,7 +14,7 @@ on:
       # To get the output from the other reusable workflow - you need to want it from it with input.
       docker-tag:
         description: "The docker tag from the version calculator"
-        required: true
+        required: false
         type: string
 
 jobs:
