@@ -5,6 +5,16 @@ name: Calculate version and make global output
 on:
   workflow_call:
     inputs:
+      # pulling the image is not related to creating the tag (it's just a demo pull).
+      # But Instead of pulling - you can building and pushing docker images with the calculated tag!
+      pull-image:
+        required: true
+        type: boolean
+        default: false
+      create-tag:
+        required: true
+        type: boolean
+        default: true
       docker-image:
         description: 'The Docker image to be tagged.'
         required: true
@@ -51,3 +61,9 @@ jobs:
       - name: Echo docker images
         run: |
           docker image ls
+  # in another job the local output would be get this way: 
+  # new_job:
+     #...
+     #steps:
+       #run:
+         # docker push dockerhub-name/newimage-${{ inputs.docker-image }}:${{ needs.tag_image.outputs.TAGGED_DOCKER_IMAGE }}

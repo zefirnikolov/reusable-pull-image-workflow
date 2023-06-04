@@ -42,3 +42,9 @@ jobs:
             echo "Invalid prefix. Exiting with error."
             exit 1
           fi
+      - name: pull and tag the docker image   # pulling the image is not related to creating the tag (it's just a demo pull).
+      # But Instead of pulling - you can building and pushing docker images with the calculated tag!
+        run: |
+          docker pull ${{ inputs.docker-image }}
+          docker image tag ${{ inputs.docker-image }} dockerhub-name/newimage-${{ inputs.docker-image }}:${{ inputs.docker-tag }}
+          docker image ls
