@@ -38,6 +38,7 @@ jobs:
       TAGGED_DOCKER_IMAGE: ${{ steps.tag_docker_image.outputs.TAGGED_DOCKER_IMAGE }}
     steps:
       - name: Pull the image
+        if: ${{ inputs.pull-image }}
         run: |
           docker pull ${{ inputs.docker-image }}
       - name: Set Docker image tag
