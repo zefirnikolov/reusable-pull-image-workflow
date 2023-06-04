@@ -11,10 +11,6 @@ on:
         required: true
         type: boolean
         default: false
-      create-tag:
-        required: true
-        type: boolean
-        default: true
       docker-image:
         description: 'The Docker image to be tagged.'
         required: true
