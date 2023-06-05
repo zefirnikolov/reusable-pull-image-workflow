@@ -58,13 +58,14 @@ jobs:
       - name: Read the files and delete
         run: |
           ls ./download
+          cat ./download/for-upload-1.txt
+          cat ./download/for-upload-2.txt
+          ls
+          rm ./download/for-upload-1.txt ./download/for-upload-2.txt
+          ls
 
   download-second-artifacts:
-        #  cat ./files/for-upload-1.txt
-        #  cat ./files/for-upload-2.txt
-        #  ls
-        #  rm for-upload-1.txt for-upload-2.txt
-        #  ls
+
     runs-on: ubuntu-latest
     needs: [upload-artifacts, download-artifacts]
     steps:
